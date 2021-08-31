@@ -28,7 +28,8 @@ error_colormap = gen_error_colormap()
 
 
 class disp_error_image_func(Function):
-    def forward(self, D_est_tensor, D_gt_tensor, abs_thres=3., rel_thres=0.05, dilate_radius=1):
+    @staticmethod
+    def forward( D_est_tensor, D_gt_tensor, abs_thres=3., rel_thres=0.05, dilate_radius=1):
         D_gt_np = D_gt_tensor.detach().cpu().numpy()
         D_est_np = D_est_tensor.detach().cpu().numpy()
         B, H, W = D_gt_np.shape

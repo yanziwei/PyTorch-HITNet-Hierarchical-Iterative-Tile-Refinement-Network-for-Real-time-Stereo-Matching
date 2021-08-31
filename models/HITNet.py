@@ -8,7 +8,7 @@ from .tile_update import TileUpdate, PostTileUpdate, FinalTileUpdate, PostTileUp
 from models.submodules import DispUpsampleBySlantedPlane, SlantDUpsampleBySlantedPlaneT4T4, SlantD2xUpsampleBySlantedPlaneT4T2
 import pdb
 from utils.write_pfm import write_pfm_tensor
-
+from .pos_encoding import forward_single
 
 class HITNet(nn.Module):
     def __init__(self, args):
@@ -43,16 +43,19 @@ class HITNet(nn.Module):
         # self.relu = nn.ReLU(inplace=True)
 
     def forward(self, left_img, right_img):
+        if 0:
+            left_img = forward_single(left_img)
+            right_img = forward_single(right_img)
         left_fea_pyramid = self.feature_extractor(left_img)
         right_fea_pyramid = self.feature_extractor(right_img)
         init_cv_pyramid, init_tile_pyramid = self.tile_init(left_fea_pyramid, right_fea_pyramid)
         refined_tile16x = self.tile_update0(left_fea_pyramid[0], right_fea_pyramid[0], init_tile_pyramid[0])[0]
-        tile_update8x = self.tile_update1(left_fea_pyramid[1], right_fea_pyramid[1], init_tile_pyramid[1], refined_tile16x)
-        tile_update4x = self.tile_update2(left_fea_pyramid[2], right_fea_pyramid[2], init_tile_pyramid[2], tile_update8x[0])
-        tile_update2x = self.tile_update3(left_fea_pyramid[3], right_fea_pyramid[3], init_tile_pyramid[3], tile_update4x[0])
-        tile_update1x = self.tile_update4(left_fea_pyramid[4], right_fea_pyramid[4], init_tile_pyramid[4], tile_update2x[0])
-        refined_tile1x = self.tile_update4_1(left_fea_pyramid[2], tile_update1x[0])
-        refined_tile05x = self.tile_update5(left_fea_pyramid[3], refined_tile1x)
+        tile_update8x   = self.tile_update1(left_fea_pyramid[1], right_fea_pyramid[1], init_tile_pyramid[1], refined_tile16x)
+        tile_update4x   = self.tile_update2(left_fea_pyramid[2], right_fea_pyramid[2], init_tile_pyramid[2], tile_update8x[0])
+        tile_update2x   = self.tile_update3(left_fea_pyramid[3], right_fea_pyramid[3], init_tile_pyramid[3], tile_update4x[0])
+        tile_update1x   = self.tile_update4(left_fea_pyramid[4], right_fea_pyramid[4], init_tile_pyramid[4], tile_update2x[0])
+        refined_tile1x   = self.tile_update4_1(left_fea_pyramid[2], tile_update1x[0])
+        refined_tile05x  = self.tile_update5(left_fea_pyramid[3], refined_tile1x)
         refined_tile025x = self.tile_update6(left_fea_pyramid[4], refined_tile05x)
         final_disp = refined_tile025x
         # pdb.set_trace()

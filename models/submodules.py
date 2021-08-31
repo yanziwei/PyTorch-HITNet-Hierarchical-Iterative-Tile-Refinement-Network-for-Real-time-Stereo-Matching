@@ -59,7 +59,7 @@ class SlantD2xUpsampleBySlantedPlaneT4T2(nn.Module):
         disp0 = torch.cat(disp0, 1)  # [B, upscale**2, H/upscale, W/upscale]
         disp1 = self.DUC(disp0)  # [B, 1, H/1, W/1]
         return disp1
-
+#以上三个class都是为了上采样到[B,1,H,W]
 
 class BuildVolume2d(nn.Module):
     def __init__(self, maxdisp):
@@ -78,8 +78,8 @@ class BuildVolume2d(nn.Module):
                 cost[:, i, :, :] = torch.norm(feat_l[:, :, :, :] - padded_feat_r[:, :, :, self.maxdisp-1::4], 1, 1)
 
         return cost.contiguous()  # B*D*H*W
-
-
+#组装cost volume
+#local 的cost
 class BuildVolume2dChaos(nn.Module):
     def __init__(self):
         super(BuildVolume2dChaos, self).__init__()

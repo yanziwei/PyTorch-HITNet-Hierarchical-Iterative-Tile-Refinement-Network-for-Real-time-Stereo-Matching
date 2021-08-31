@@ -1,10 +1,12 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from boxx import inpkg,tree
 from .FE import BasicConv2d
-import pdb
 from .submodules import BuildVolume2d
-
+# from FE import BasicConv2d
+# from submodules import BuildVolume2d
+import argparse
 
 class INIT(nn.Module):
     """
@@ -176,5 +178,22 @@ class INIT(nn.Module):
 
 
 
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='HITNet')
+    parser.add_argument('--maxdisp', type=int, default=192, help='maximum disparity')
+    parser.add_argument('--fea_c', type=list, default=[32, 24, 24, 16, 16], help='feature extraction channels')
+    args = parser.parse_args()
+    devices = "cuda"
+    l0 = torch.rand((1,32,12,24),device=devices)
+    l1 = torch.rand((1,24,24,48),device=devices)
+    l2 = torch.rand((1,24,48,96),device=devices)
+    l3 = torch.rand((1,16,96,192),device=devices)
+    l4 = torch.rand((1,16,192,384),device=devices)
+    x = [l0,l1,l2,l3,l4]
+    tree-x
 
+    model = INIT(args)
+    model.to("cuda")
+    y= model.forward(x,x)
+    tree-y
 

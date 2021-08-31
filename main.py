@@ -74,8 +74,8 @@ with open(logfilename, 'a') as log:  # wrt running information to log
 
 # dataset, dataloader
 StereoDataset = __datasets__[args.dataset]
-train_dataset = StereoDataset(args.datapath, args.trainlist, True)
-test_dataset = StereoDataset(args.datapath, args.testlist, False)
+train_dataset = StereoDataset(args.datapath, True)
+test_dataset = StereoDataset(args.datapath,  False)
 TrainImgLoader = DataLoader(train_dataset, args.batch_size, shuffle=True, num_workers=8, drop_last=False)
 TestImgLoader = DataLoader(test_dataset, args.test_batch_size, shuffle=False, num_workers=4, drop_last=False)
 
@@ -218,7 +218,7 @@ def train_sample(sample, compute_metrics=False):
 
     if compute_metrics:
         with torch.no_grad():
-            image_outputs["errormap"] = [disp_error_image_func()(disp_est.squeeze(1), disp_gt.squeeze(1)) for disp_est in prop_disp_pyramid]
+            image_outputs["errormap"] = [disp_error_image_func().forward(disp_est.squeeze(1), disp_gt.squeeze(1)) for disp_est in prop_disp_pyramid]
             scalar_outputs["EPE"] = [EPE_metric(disp_est.squeeze(1), disp_gt.squeeze(1), mask.squeeze(1)) for disp_est in prop_disp_pyramid]
             scalar_outputs["D1"] = [D1_metric(disp_est.squeeze(1), disp_gt.squeeze(1), mask.squeeze(1)) for disp_est in prop_disp_pyramid]
             scalar_outputs["Thres1"] = [Thres_metric(disp_est.squeeze(1), disp_gt.squeeze(1), mask.squeeze(1), 1.0) for disp_est in prop_disp_pyramid]
@@ -254,7 +254,7 @@ def test_sample(sample, compute_metrics=True):
     scalar_outputs["Thres3"] = [Thres_metric(disp_est.squeeze(1), disp_gt.squeeze(1), mask.squeeze(1), 3.0) for disp_est in prop_disp_pyramid]
 
     if compute_metrics:
-        image_outputs["errormap"] = [disp_error_image_func()(disp_est.squeeze(1), disp_gt.squeeze(1)) for disp_est in prop_disp_pyramid]
+        image_outputs["errormap"] = [disp_error_image_func().forward(disp_est.squeeze(1), disp_gt.squeeze(1)) for disp_est in prop_disp_pyramid]
 
     return tensor2float(loss), tensor2float(scalar_outputs), image_outputs
 

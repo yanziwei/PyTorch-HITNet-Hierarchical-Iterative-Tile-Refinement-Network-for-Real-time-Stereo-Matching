@@ -1,7 +1,7 @@
 import torch.nn.functional as F
 import torch
 import torch.nn as nn
-
+from boxx import *
 
 class feature_extraction_conv(nn.Module):
     """
@@ -63,7 +63,7 @@ class feature_extraction_conv(nn.Module):
         layer4x_2 = self.last_conv_4x(layer4x_1)
         layer2x_2 = self.last_conv_2x(layer2x_1)
         layer1x_2 = self.last_conv_1x(layer1x_1)
-
+        
         return [layer16x_1, layer8x_2, layer4x_2, layer2x_2, layer1x_2]  # 1/16, 1/8, 1/4, 1/2, 1/1
 
 
@@ -99,3 +99,12 @@ class unetUp(nn.Module):
         layer2 = self.reduce_conv2(torch.cat([layer1, inputs2], 1))
         output = self.conv(layer2)
         return output
+
+
+if __name__ == "__main__":
+    args = None
+    x = torch.rand(1,3,192,384)
+    feature_extractor = feature_extraction_conv(args)
+    tree-x
+    y= feature_extractor.forward(x)
+    tree-y
