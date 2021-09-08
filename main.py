@@ -81,8 +81,7 @@ TestImgLoader = DataLoader(test_dataset, args.test_batch_size, shuffle=False, nu
 
 # model, optimizer
 model = HITNet(args)
-model = nn.DataParallel(model)
-model.cuda()
+model = nn.DataParallel(model).cuda()
 optimizer = optim.Adam(model.parameters(), lr=args.lr, betas=(0.9, 0.999))
 
 # load parameters
